@@ -1,16 +1,16 @@
 # SymPy-for-Algebra
 This is a custom fork of SymPy with an added object of type `Equation`.
 This fork is used by
-[Algebra-with-Sympy](https://github.com/gutow/Algebra_with_Sympy). This is 
+[Algebra-with-Sympy](https://github.com/gutow/Algebra_with_Sympy). This is
 typically maintained to match the latest stable release of SymPy.
 
-If you wish to make use of the `Equation` object it is recommended that you 
+If you wish to make use of the `Equation` object it is recommended that you
 use it through the
-[Algebra-with-Sympy](https://github.com/gutow/Algebra_with_Sympy) package, 
-which has many convenience tools for interactive step-by-step algebraic 
-manipulations of equations (e.g. $a = \frac{b,c} \rightarrow a*c = b$).
+[Algebra-with-Sympy](https://github.com/gutow/Algebra_with_Sympy) package,
+which has many convenience tools for interactive step-by-step algebraic
+manipulations of equations (e.g. $a = {\frac{b,c}} \rightarrow {ac = b}$).
 
-If you intend to use the SymPy package directly or wish to learn about 
+If you intend to use the SymPy package directly or wish to learn about
 SymPy capabilities see the information below.
 
 # SymPy
