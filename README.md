@@ -8,7 +8,7 @@ If you wish to make use of the `Equation` object it is recommended that you
 use it through the
 [Algebra-with-Sympy](https://github.com/gutow/Algebra_with_Sympy) package,
 which has many convenience tools for interactive step-by-step algebraic
-manipulations of equations (e.g. $a = \frac{b,c} \rightarrow ac = b$).
+manipulations of equations (e.g. $a = \frac{b}{c} \rightarrow ac = b $).
 
 If you intend to use the SymPy package directly or wish to learn about
 SymPy capabilities see the information below.
