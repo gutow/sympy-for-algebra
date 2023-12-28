@@ -109,14 +109,13 @@ def test_functions_extensions_eqn_not_arg1():
         eq = Equation(a, b / c)
         obj = globals()['besselj']
         raises(NotImplementedError, lambda: obj(eq, eq))
-        
+
 #####
 # Testing of Equation class
 #####
-from sympy import symbols, integrate, simplify, expand, factor, Integral, Add
+from sympy import integrate, simplify, expand, factor, Integral, Add
 from sympy import diff, FiniteSet, Equality, Function, functions, Matrix, S
-from sympy import sin, cos, log, exp, latex, Symbol, I, collect, Equation, Eqn
-from sympy import Equality
+from sympy import sin, cos, log, exp, latex, Symbol, I, collect, Eqn
 from sympy import sqrt, root, Heaviside
 
 def test_define_equation():
