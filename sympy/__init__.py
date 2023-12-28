@@ -263,7 +263,7 @@ __all__ = [
     # sympy.core
     'sympify', 'SympifyError', 'cacheit', 'Basic', 'Atom',
     'preorder_traversal', 'S', 'Expr', 'AtomicExpr', 'UnevaluatedExpr',
-    'Equation',
+    'Equation', 'Eqn',
     'Symbol', 'Wild', 'Dummy', 'symbols', 'var', 'Number', 'Float',
     'Rational', 'Integer', 'NumberSymbol', 'RealNumber', 'igcd', 'ilcm',
     'seterr', 'E', 'I', 'nan', 'oo', 'pi', 'zoo', 'AlgebraicNumber', 'comp',
