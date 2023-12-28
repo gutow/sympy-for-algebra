@@ -245,7 +245,7 @@ def test_rewrite_add():
     assert set(eq.rewrite(Add, evaluate=None).lhs.args) == set({b, x, b, -x})
     assert set(eq.rewrite(Add, evaluate=False).lhs.args) == set({b, x, b, -x})
     assert eq.rewrite(Add, eqn=False) == 2 * b
-    assert set(eq.rewrite(Add, eqn=False, evaluate=False).args) == set({b, x, 
+    assert set(eq.rewrite(Add, eqn=False, evaluate=False).args) == set({b, x,
                                                                         b, -x})
 
 
