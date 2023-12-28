@@ -1,5 +1,5 @@
-from sympy.testing.pytest import raises, XFAIL
-from sympy import functions, FunctionClass, symbols, Equation
+from sympy.testing.pytest import raises
+from sympy import functions, symbols, Equation
 
 #####
 # Testing that sympy functions work with Equations
@@ -113,9 +113,9 @@ def test_functions_extensions_eqn_not_arg1():
 #####
 # Testing of Equation class
 #####
-from sympy import integrate, simplify, expand, factor, Integral, Add
-from sympy import diff, FiniteSet, Equality, Function, functions, Matrix, S
-from sympy import sin, cos, log, exp, latex, Symbol, I, collect, Eqn
+from sympy import integrate, simplify, expand, factor, Add
+from sympy import diff, FiniteSet, Equality, functions, Matrix, S
+from sympy import sin, cos, log, exp, I, collect, Eqn
 from sympy import sqrt, root, Heaviside
 
 def test_define_equation():
