@@ -242,10 +242,11 @@ def test_rewrite_add():
     b, x = symbols("x, b")
     eq = Equation(x + b, x - b)
     assert eq.rewrite(Add) == Equation(2 * b, 0)
-    assert set(eq.rewrite(Add, evaluate=None).lhs.args) == set((b, x, b, -x))
-    assert set(eq.rewrite(Add, evaluate=False).lhs.args) == set((b, x, b, -x))
+    assert set(eq.rewrite(Add, evaluate=None).lhs.args) == set({b, x, b, -x})
+    assert set(eq.rewrite(Add, evaluate=False).lhs.args) == set({b, x, b, -x})
     assert eq.rewrite(Add, eqn=False) == 2 * b
-    assert set(eq.rewrite(Add, eqn=False, evaluate=False).args) == set((b, x, b, -x))
+    assert set(eq.rewrite(Add, eqn=False, evaluate=False).args) == set({b, x, 
+                                                                        b, -x})
 
 
 def test_rewrite():
