@@ -210,7 +210,7 @@ def test_helper_functions():
     assert root(Eqn(a,b/c),3) == Equation(a**(S(1)/S(3)), (b/c)**(S(1)/S(3)))
     assert root(b/c,3) == (b/c)**(S(1)/S(3))
     assert sqrt(Eqn(a,b/c)) == Equation(sqrt(a), sqrt(b/c))
-    
+
 def test_Heaviside():
     a, b, c, x = symbols('a b c x')
     tsteqn = Equation(a, b / c)
