@@ -161,7 +161,7 @@ def test_binary_op():
     assert tsteqn**a == Equation(a**a, (b/c)**a)
     assert tsteqn._eval_power(tsteqn) == Equation(a**a, (b/c)**(b/c))
     assert tsteqn._eval_power(a) == Equation(a**a, (b/c)**a)
-    
+
 def test_sympy_functions():
     a, b, c = symbols('a b c')
     tsteqn = Equation(a, b/c)
