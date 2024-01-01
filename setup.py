@@ -301,16 +301,16 @@ with open(os.path.join(dir_setup, 'sympy', 'release.py')) as f:
 
 
 if __name__ == '__main__':
-    setup(name='sympy',
+    setup(name='sympy-for-algebra',
           version=__version__,
           description='Computer algebra system (CAS) in Python',
           author='SymPy development team',
           author_email='sympy@googlegroups.com',
           license='BSD',
           keywords="Math CAS",
-          url='https://sympy.org',
+          url='https://github.com/gutow/sympy-for-algebra',
           project_urls={
-              'Source': 'https://github.com/sympy/sympy',
+              'Source': 'https://github.com/gutow/sympy-for-algebra',
           },
           py_modules=['isympy'],
           packages=['sympy'] + modules + tests,
