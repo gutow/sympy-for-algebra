@@ -81,6 +81,24 @@ redirects = {
     "tutorial/matrices": "../tutorials/intro-tutorial/matrices.html",
     "tutorial/manipulation": "../tutorials/intro-tutorial/manipulation.html",
 
+    "modules/physics/vector/vectors": "../explanation/modules/physics/vector/vectors/vectors.html",
+    "modules/physics/vector/kinematics": "../explanation/modules/physics/vector/kinematics/kinematics.html",
+    "modules/physics/vector/advanced": "../explanation/modules/physics/vector/advanced.html",
+    "modules/physics/vector/fields": "../explanation/modules/physics/vector/fields.html",
+    "modules/physics/mechanics/advanced": "../explanation/modules/physics/mechanics/advanced.html",
+    "modules/physics/mechanics/autolev_parser": "../explanation/modules/physics/mechanics/autolev_parser.html",
+    "modules/physics/mechanics/examples": "../tutorials/physics/mechanics/index.html",
+    "modules/physics/mechanics/joints": "../explanation/modules/physics/mechanics/joints.html",
+    "modules/physics/mechanics/kane": "../explanation/modules/physics/mechanics/kane.html",
+    "modules/physics/mechanics/lagrange": "../explanation/modules/physics/mechanics/lagrange.html",
+    "modules/physics/mechanics/masses": "../explanation/modules/physics/mechanics/masses.html",
+    "modules/physics/mechanics/reference": "../explanation/modules/physics/mechanics/reference.html",
+    "modules/physics/mechanics/symsystem": "../explanation/modules/physics/mechanics/symsystem.html",
+    "modules/physics/mechanics/linearize": "../explanation/modules/physics/mechanics/linearize.html",
+    "modules/physics/mechanics/sympy_mechanics_for_autolev_uses": "../explanation/modules/physics/mechanics/sympy_mechanics_for_autolev_uses.html",
+    "modules/physics/mechanics/examples": "../tutorials/physics/mechanics.html",
+    "tutorials/physics/biomechanics/biomechanics": "../explanation/modules/physics/biomechanics/biomechanics.html",
+
 }
 
 html_baseurl = "https://docs.sympy.org/latest/"
@@ -88,9 +106,6 @@ html_baseurl = "https://docs.sympy.org/latest/"
 # Configure Sphinx copybutton (see https://sphinx-copybutton.readthedocs.io/en/latest/use.html)
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
 copybutton_prompt_is_regexp = True
-
-# Use this to use pngmath instead
-#extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.pngmath', ]
 
 # Enable warnings for all bad cross references. These are turned into errors
 # with the -W flag in the Makefile.
@@ -174,6 +189,8 @@ pygments_dark_style = 'styles.NativeHighContrastStyle'
 
 # Don't show the source code hyperlinks when using matplotlib plot directive.
 plot_html_show_source_link = False
+
+maximum_signature_line_length = 50
 
 # Options for HTML output
 # -----------------------
@@ -344,28 +361,33 @@ latex_documents = [('index', 'sympy-%s.tex' % release, 'SymPy Documentation',
                     'SymPy Development Team', 'manual', True)]
 
 # Additional stuff for the LaTeX preamble.
-# Tweaked to work with XeTeX.
+latex_engine = 'xelatex'
+latex_use_xindy = False
 latex_elements = {
-    'babel':     '',
-    'fontenc': r'''
-% Define version of \LaTeX that is usable in math mode
-\let\OldLaTeX\LaTeX
-\renewcommand{\LaTeX}{\text{\OldLaTeX}}
-
-\usepackage{bm}
-\usepackage{amssymb}
-\usepackage{fontspec}
-\usepackage[english]{babel}
-\defaultfontfeatures{Mapping=tex-text}
+    'fontpkg': r'''
 \setmainfont{DejaVu Serif}
 \setsansfont{DejaVu Sans}
 \setmonofont{DejaVu Sans Mono}
 ''',
-    'fontpkg':   '',
-    'inputenc':  '',
-    'utf8extra': '',
     'preamble':  r'''
-'''
+% Define version of \LaTeX that is usable in math mode
+\usepackage{letltxmacro}
+\LetLtxMacro\OldLaTeX\LaTeX
+\AtBeginDocument{\DeclareRobustCommand{\LaTeX}{\text{\OldLaTeX}}}
+\let\OldUnderscore\_
+\makeatletter
+\AtBeginDocument{\sbox\sphinxcontinuationbox{\spx@opt@verbatimcontinued}}
+\makeatother
+\protected\def\_{\OldUnderscore\discretionary{}{\sphinxafterbreak}{}}
+% increase room on TOC page for page numbers going into the thousands
+\makeatletter
+\renewcommand{\@pnumwidth}{2.5em}% default is 1.55em
+\renewcommand{\@tocrmarg}{3.5em}%  default is 2.55em
+\makeatother
+''',
+    'sphinxsetup': 'verbatimforcewraps',
+    'printindex': r'\def\twocolumn[#1]{#1}\raggedright\printindex',
+    'fvset': r'\fvset{fontsize=auto}',
 }
 
 # SymPy logo on title page
@@ -383,14 +405,6 @@ latex_show_pagerefs = True
 latex_use_modindex = False
 
 default_role = 'math'
-pngmath_divpng_args = ['-gamma 1.5', '-D 110']
-# Note, this is ignored by the mathjax extension
-# Any \newcommand should be defined in the file
-pngmath_latex_preamble = '\\usepackage{amsmath}\n' \
-    '\\usepackage{bm}\n' \
-    '\\usepackage{amsfonts}\n' \
-    '\\usepackage{amssymb}\n' \
-    '\\setlength{\\parindent}{0pt}\n'
 
 texinfo_documents = [
     (master_doc, 'sympy', 'SymPy Documentation', 'SymPy Development Team',
