@@ -307,7 +307,7 @@ with open(os.path.join(dir_setup, 'sympy', 'release.py')) as f:
 
 
 if __name__ == '__main__':
-    setup(name='sympy-for-algebra',
+    setup(name='sympy',
           version=__version__,
           description='Computer algebra system (CAS) in Python',
           long_description=(Path(__file__).parent / 'README.md').read_text("UTF-8"),
@@ -316,9 +316,9 @@ if __name__ == '__main__':
           author_email='sympy@googlegroups.com',
           license='BSD',
           keywords="Math CAS",
-          url='https://github.com/gutow/sympy-for-algebra',
+          url='https://sympy.org',
           project_urls={
-              'Source': 'https://github.com/gutow/sympy-for-algebra',
+              'Source': 'https://github.com/sympy/sympy',
           },
           # Set upper bound when making the release branch.
           install_requires=[
