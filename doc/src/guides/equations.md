@@ -22,9 +22,9 @@ isolate P on the lhs.
 >>> from sympy import *
 >>> var('P V n R T a b')
 (P, V, n, R, T, a, b)
->>> eq1 =  Eqn((P - a**2*n**2/V**2)*(V - b*n), R*T*n)
+>>> eq1 =  Eqn((P - a*n**2/V**2)*(V - b*n), R*T*n)
 >>> eq1
-Eqn((P - a**2*n**2/V**2)*(V - b*n), R*T*n)
+Eqn((P - a*n**2/V**2)*(V - b*n), R*T*n)
 ```
 In an interactive environment such as
 [Jupyter notebooks](https://jupyter.org) the equation would be depicted in
@@ -36,37 +36,40 @@ shown below:
 For the rest of the examples we will turn on pretty_printing to approximate
 this.
 
-**Note**: More extensive control of output formatting, display of math
+**Note 1**: Many more examples are available in the docstrings within the
+`Equation` class and the API documentation generated from these.
+
+**Note 2**: More extensive control of output formatting, display of math
 notation and code simultaneously, plus additional convenience tools
 useful during interactive sessions are available by using this class via the
 [Algebra_with_Sympy extension](https://gutow.github.io/Algebra_with_Sympy).
 ```commandline
 >>> init_printing(pretty_print=True)
 >>> eq1
-⎛     2  2⎞
-⎜    a ⋅n ⎟
-⎜P - ─────⎟⋅(V - b⋅n) = R⋅T⋅n
-⎜      2  ⎟
-⎝     V   ⎠
+⎛       2⎞
+⎜    a⋅n ⎟
+⎜P - ────⎟⋅(V - b⋅n) = R⋅T⋅n
+⎜     2  ⎟
+⎝    V   ⎠
 ```
 The first step is to divide both sides by `(V - n*b)`. To achieve this we
 simply divide the equation by the quantity:
 ```commandline
 >>> eq2=eq1/(V-n*b)
 >>> eq2
-     2  2
-    a ⋅n     R⋅T⋅n
-P - ───── = ───────
+       2
+    a⋅n     R⋅T⋅n
+P - ──── = ───────
       2     V - b⋅n
      V
 ```
 The last step is just as easy:
 ```commandline
->>> eq3 = eq2+(a*n/V)**2
+>>> eq3 = eq2+a*(n/V)**2
 >>> eq3
-               2  2
-     R⋅T⋅n    a ⋅n
-P = ─────── + ─────
+                 2
+     R⋅T⋅n    a⋅n
+P = ─────── + ────
     V - b⋅n     2
                V
 ```
