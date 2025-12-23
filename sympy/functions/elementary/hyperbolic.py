@@ -1,6 +1,6 @@
 from sympy.core import S, sympify, cacheit
 from sympy.core.add import Add
-from sympy.core.function import Function, ArgumentIndexError
+from sympy.core.function import DefinedFunction, ArgumentIndexError
 from sympy.core.logic import fuzzy_or, fuzzy_and, fuzzy_not, FuzzyBool
 from sympy.core.numbers import I, pi, Rational
 from sympy.core.symbol import Dummy
@@ -103,14 +103,17 @@ def _asech_table():
 ###############################################################################
 
 
-class HyperbolicFunction(Function):
+class HyperbolicFunction(DefinedFunction):
     """
     Base class for hyperbolic functions.
 
     See Also
     ========
 
-    sinh, cosh, tanh, coth
+    sympy.functions.elementary.hyperbolic.sinh
+    sympy.functions.elementary.hyperbolic.cosh
+    sympy.functions.elementary.hyperbolic.tanh
+    sympy.functions.elementary.hyperbolic.coth
     """
 
     unbranched = True
@@ -167,7 +170,9 @@ class sinh(HyperbolicFunction):
     See Also
     ========
 
-    cosh, tanh, asinh
+    sympy.functions.elementary.hyperbolic.cosh
+    sympy.functions.elementary.hyperbolic.tanh
+    sympy.functions.elementary.hyperbolic.asinh
     """
 
     def fdiff(self, argindex=1):
@@ -317,7 +322,7 @@ class sinh(HyperbolicFunction):
     def _eval_rewrite_as_csch(self, arg, **kwargs):
         return 1 / csch(arg)
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0].as_leading_term(x, logx=logx, cdir=cdir)
         arg0 = arg.subs(x, 0)
 
@@ -379,7 +384,9 @@ class cosh(HyperbolicFunction):
     See Also
     ========
 
-    sinh, tanh, acosh
+    sympy.functions.elementary.hyperbolic.sinh
+    sympy.functions.elementary.hyperbolic.tanh
+    sympy.functions.elementary.hyperbolic.acosh
     """
 
     def fdiff(self, argindex=1):
@@ -394,9 +401,7 @@ class cosh(HyperbolicFunction):
         if arg.is_Number:
             if arg is S.NaN:
                 return S.NaN
-            elif arg is S.Infinity:
-                return S.Infinity
-            elif arg is S.NegativeInfinity:
+            elif arg is S.Infinity or arg is S.NegativeInfinity:
                 return S.Infinity
             elif arg.is_zero:
                 return S.One
@@ -514,7 +519,7 @@ class cosh(HyperbolicFunction):
     def _eval_rewrite_as_sech(self, arg, **kwargs):
         return 1 / sech(arg)
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0].as_leading_term(x, logx=logx, cdir=cdir)
         arg0 = arg.subs(x, 0)
 
@@ -625,7 +630,9 @@ class tanh(HyperbolicFunction):
     See Also
     ========
 
-    sinh, cosh, atanh
+    sympy.functions.elementary.hyperbolic.sinh
+    sympy.functions.elementary.hyperbolic.cosh
+    sympy.functions.elementary.hyperbolic.atanh
     """
 
     def fdiff(self, argindex=1):
@@ -767,7 +774,7 @@ class tanh(HyperbolicFunction):
     def _eval_rewrite_as_coth(self, arg, **kwargs):
         return 1/coth(arg)
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):
+    def _eval_as_leading_term(self, x, logx, cdir):
         from sympy.series.order import Order
         arg = self.args[0].as_leading_term(x)
 
@@ -838,7 +845,9 @@ class coth(HyperbolicFunction):
     See Also
     ========
 
-    sinh, cosh, acoth
+    sympy.functions.elementary.hyperbolic.sinh
+    sympy.functions.elementary.hyperbolic.cosh
+    sympy.functions.elementary.hyperbolic.acoth
     """
 
     def fdiff(self, argindex=1):
@@ -964,7 +973,7 @@ class coth(HyperbolicFunction):
         if self.args[0].is_extended_real:
             return self.args[0].is_negative
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):
+    def _eval_as_leading_term(self, x, logx, cdir):
         from sympy.series.order import Order
         arg = self.args[0].as_leading_term(x)
 
@@ -1057,8 +1066,8 @@ class ReciprocalHyperbolicFunction(HyperbolicFunction):
     def _eval_expand_trig(self, **hints):
         return self._calculate_reciprocal("_eval_expand_trig", **hints)
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):
-        return (1/self._reciprocal_of(self.args[0]))._eval_as_leading_term(x)
+    def _eval_as_leading_term(self, x, logx, cdir):
+        return (1/self._reciprocal_of(self.args[0]))._eval_as_leading_term(x, logx=logx, cdir=cdir)
 
     def _eval_is_extended_real(self):
         return self._reciprocal_of(self.args[0]).is_extended_real
@@ -1084,7 +1093,12 @@ class csch(ReciprocalHyperbolicFunction):
     See Also
     ========
 
-    sinh, cosh, tanh, sech, asinh, acosh
+    sympy.functions.elementary.hyperbolic.sinh
+    sympy.functions.elementary.hyperbolic.cosh
+    sympy.functions.elementary.hyperbolic.tanh
+    sympy.functions.elementary.hyperbolic.sech
+    sympy.functions.elementary.hyperbolic.asinh
+    sympy.functions.elementary.hyperbolic.acosh
     """
 
     _reciprocal_of = sinh
@@ -1155,7 +1169,13 @@ class sech(ReciprocalHyperbolicFunction):
     See Also
     ========
 
-    sinh, cosh, tanh, coth, csch, asinh, acosh
+    sympy.functions.elementary.hyperbolic.sinh
+    sympy.functions.elementary.hyperbolic.cosh
+    sympy.functions.elementary.hyperbolic.tanh
+    sympy.functions.elementary.hyperbolic.coth
+    sympy.functions.elementary.hyperbolic.csch
+    sympy.functions.elementary.hyperbolic.asinh
+    sympy.functions.elementary.hyperbolic.acosh
     """
 
     _reciprocal_of = cosh
@@ -1197,7 +1217,7 @@ class sech(ReciprocalHyperbolicFunction):
 ############################# HYPERBOLIC INVERSES #############################
 ###############################################################################
 
-class InverseHyperbolicFunction(Function):
+class InverseHyperbolicFunction(DefinedFunction):
     """Base class for inverse hyperbolic functions."""
 
     pass
@@ -1222,7 +1242,9 @@ class asinh(InverseHyperbolicFunction):
     See Also
     ========
 
-    acosh, atanh, sinh
+    sympy.functions.elementary.hyperbolic.acosh
+    sympy.functions.elementary.hyperbolic.atanh
+    sympy.functions.elementary.hyperbolic.sinh
     """
 
     def fdiff(self, argindex=1):
@@ -1293,7 +1315,7 @@ class asinh(InverseHyperbolicFunction):
                 F = factorial(k)
                 return S.NegativeOne**k * R / F * x**n / n
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):  # asinh
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0]
         x0 = arg.subs(x, 0).cancel()
         if x0.is_zero:
@@ -1330,7 +1352,7 @@ class asinh(InverseHyperbolicFunction):
         if arg0 in (I, -I):
             return self.rewrite(log)._eval_nseries(x, n, logx=logx, cdir=cdir)
 
-        res = Function._eval_nseries(self, x, n=n, logx=logx)
+        res = super()._eval_nseries(x, n=n, logx=logx)
         if arg0 is S.ComplexInfinity:
             return res
 
@@ -1400,7 +1422,9 @@ class acosh(InverseHyperbolicFunction):
     See Also
     ========
 
-    asinh, atanh, cosh
+    sympy.functions.elementary.hyperbolic.asinh
+    sympy.functions.elementary.hyperbolic.atanh
+    sympy.functions.elementary.hyperbolic.cosh
     """
 
     def fdiff(self, argindex=1):
@@ -1415,9 +1439,7 @@ class acosh(InverseHyperbolicFunction):
         if arg.is_Number:
             if arg is S.NaN:
                 return S.NaN
-            elif arg is S.Infinity:
-                return S.Infinity
-            elif arg is S.NegativeInfinity:
+            elif arg is S.Infinity or arg is S.NegativeInfinity:
                 return S.Infinity
             elif arg.is_zero:
                 return pi*I / 2
@@ -1483,7 +1505,7 @@ class acosh(InverseHyperbolicFunction):
                 F = factorial(k)
                 return -R / F * I * x**n / n
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):  # acosh
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0]
         x0 = arg.subs(x, 0).cancel()
         # Handling branch points
@@ -1516,7 +1538,7 @@ class acosh(InverseHyperbolicFunction):
         if arg0 in (S.One, S.NegativeOne):
             return self.rewrite(log)._eval_nseries(x, n, logx=logx, cdir=cdir)
 
-        res = Function._eval_nseries(self, x, n=n, logx=logx)
+        res = super()._eval_nseries(x, n=n, logx=logx)
         if arg0 is S.ComplexInfinity:
             return res
 
@@ -1586,7 +1608,9 @@ class atanh(InverseHyperbolicFunction):
     See Also
     ========
 
-    asinh, acosh, tanh
+    sympy.functions.elementary.hyperbolic.asinh
+    sympy.functions.elementary.hyperbolic.acosh
+    sympy.functions.elementary.hyperbolic.tanh
     """
 
     def fdiff(self, argindex=1):
@@ -1628,19 +1652,20 @@ class atanh(InverseHyperbolicFunction):
         if arg.is_zero:
             return S.Zero
 
-        if isinstance(arg, tanh) and arg.args[0].is_number:
+        if isinstance(arg, tanh):
             z = arg.args[0]
             if z.is_real:
                 return z
-            r, i = match_real_imag(z)
-            if r is not None and i is not None:
-                f = floor(2*i/pi)
-                even = f.is_even
-                m = z - I*f*pi/2
-                if even is True:
-                    return m
-                elif even is False:
-                    return m - I*pi/2
+            if z.is_number:
+                r, i = match_real_imag(z)
+                if r is not None and i is not None:
+                    f = floor(2*i/pi)
+                    even = f.is_even
+                    m = z - I*f*pi/2
+                    if even is True:
+                        return m
+                    elif even is False:
+                        return m - I*pi/2
 
     @staticmethod
     @cacheit
@@ -1651,7 +1676,7 @@ class atanh(InverseHyperbolicFunction):
             x = sympify(x)
             return x**n / n
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):  # atanh
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0]
         x0 = arg.subs(x, 0).cancel()
         if x0.is_zero:
@@ -1687,7 +1712,7 @@ class atanh(InverseHyperbolicFunction):
         if arg0 in (S.One, S.NegativeOne):
             return self.rewrite(log)._eval_nseries(x, n, logx=logx, cdir=cdir)
 
-        res = Function._eval_nseries(self, x, n=n, logx=logx)
+        res = super()._eval_nseries(x, n=n, logx=logx)
         if arg0 is S.ComplexInfinity:
             return res
 
@@ -1751,7 +1776,9 @@ class acoth(InverseHyperbolicFunction):
     See Also
     ========
 
-    asinh, acosh, coth
+    sympy.functions.elementary.hyperbolic.asinh
+    sympy.functions.elementary.hyperbolic.acosh
+    sympy.functions.elementary.hyperbolic.coth
     """
 
     def fdiff(self, argindex=1):
@@ -1765,9 +1792,7 @@ class acoth(InverseHyperbolicFunction):
         if arg.is_Number:
             if arg is S.NaN:
                 return S.NaN
-            elif arg is S.Infinity:
-                return S.Zero
-            elif arg is S.NegativeInfinity:
+            elif arg is S.Infinity or arg is S.NegativeInfinity:
                 return S.Zero
             elif arg.is_zero:
                 return pi*I / 2
@@ -1803,7 +1828,7 @@ class acoth(InverseHyperbolicFunction):
             x = sympify(x)
             return x**n / n
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):  # acoth
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0]
         x0 = arg.subs(x, 0).cancel()
         if x0 is S.ComplexInfinity:
@@ -1839,7 +1864,7 @@ class acoth(InverseHyperbolicFunction):
         if arg0 in (S.One, S.NegativeOne):
             return self.rewrite(log)._eval_nseries(x, n, logx=logx, cdir=cdir)
 
-        res = Function._eval_nseries(self, x, n=n, logx=logx)
+        res = super()._eval_nseries(x, n=n, logx=logx)
         if arg0 is S.ComplexInfinity:
             return res
 
@@ -1908,7 +1933,10 @@ class asech(InverseHyperbolicFunction):
     See Also
     ========
 
-    asinh, atanh, cosh, acoth
+    sympy.functions.elementary.hyperbolic.asinh
+    sympy.functions.elementary.hyperbolic.atanh
+    sympy.functions.elementary.hyperbolic.cosh
+    sympy.functions.elementary.hyperbolic.acoth
 
     References
     ==========
@@ -1931,9 +1959,7 @@ class asech(InverseHyperbolicFunction):
         if arg.is_Number:
             if arg is S.NaN:
                 return S.NaN
-            elif arg is S.Infinity:
-                return pi*I / 2
-            elif arg is S.NegativeInfinity:
+            elif arg is S.Infinity or arg is S.NegativeInfinity:
                 return pi*I / 2
             elif arg.is_zero:
                 return S.Infinity
@@ -1975,7 +2001,7 @@ class asech(InverseHyperbolicFunction):
                 F = factorial(k) * n // 2 * n // 2
                 return -1 * R / F * x**n / 4
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):  # asech
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0]
         x0 = arg.subs(x, 0).cancel()
         # Handling branch points
@@ -2030,7 +2056,7 @@ class asech(InverseHyperbolicFunction):
             res = (res1.removeO()*sqrt(f)).expand()
             return ser.removeO().subs(t, res).expand().powsimp() + O(x**n, x)
 
-        res = Function._eval_nseries(self, x, n=n, logx=logx)
+        res = super()._eval_nseries(x, n=n, logx=logx)
         if arg0 is S.ComplexInfinity:
             return res
 
@@ -2104,7 +2130,7 @@ class acsch(InverseHyperbolicFunction):
     See Also
     ========
 
-    asinh
+    sympy.functions.elementary.hyperbolic.asinh
 
     References
     ==========
@@ -2127,9 +2153,7 @@ class acsch(InverseHyperbolicFunction):
         if arg.is_Number:
             if arg is S.NaN:
                 return S.NaN
-            elif arg is S.Infinity:
-                return S.Zero
-            elif arg is S.NegativeInfinity:
+            elif arg is S.Infinity or arg is S.NegativeInfinity:
                 return S.Zero
             elif arg.is_zero:
                 return S.ComplexInfinity
@@ -2174,7 +2198,7 @@ class acsch(InverseHyperbolicFunction):
                 F = factorial(k) * n // 2 * n // 2
                 return S.NegativeOne**(k +1) * R / F * x**n / 4
 
-    def _eval_as_leading_term(self, x, logx=None, cdir=0):  # acsch
+    def _eval_as_leading_term(self, x, logx, cdir):
         arg = self.args[0]
         x0 = arg.subs(x, 0).cancel()
         # Handling branch points
@@ -2234,7 +2258,7 @@ class acsch(InverseHyperbolicFunction):
             res = (res1.removeO()*sqrt(f)).expand()
             return ser.removeO().subs(t, res).expand().powsimp() + O(x**n, x)
 
-        res = Function._eval_nseries(self, x, n=n, logx=logx)
+        res = super()._eval_nseries(x, n=n, logx=logx)
         if arg0 is S.ComplexInfinity:
             return res
 

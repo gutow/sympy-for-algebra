@@ -214,6 +214,19 @@ def test_eigenvals():
     # CRootOf may not be unique.
     assert m.eigenvals()
 
+    A = Matrix([
+        [1, 1, 0, 1, -1, 0, 1],
+        [0, 2, 1, 0, 1, -1, 0],
+        [1, 0, 1, 1, 0, 1, -1],
+        [1, -1, 0, 0, 1, 0, 1],
+        [0, 1, 1, -1, 1, 1, 0],
+        [1, 0, -1, 1, 0, 1, 1],
+        [0, 1, 0, 1, -1, 0, 2]
+    ])
+    eigs = A.eigenvals()
+    diff = (A.trace() - sum(eig * mult for eig, mult in eigs.items())).evalf()
+    assert abs(diff) < 1e-10
+
 
 def test_eigenvects():
     M = Matrix([[0, 1, 1],
@@ -410,6 +423,8 @@ def test_is_diagonalizable():
 
 
 def test_jordan_form():
+    from sympy import nsimplify
+
     m = Matrix(3, 2, [-3, 1, -3, 20, 3, 10])
     raises(NonSquareMatrixError, lambda: m.jordan_form())
 
@@ -444,10 +459,6 @@ def test_jordan_form():
     assert Matrix(1, 1, [1]).jordan_form() == (Matrix([1]), Matrix([1]))
     assert Matrix(1, 1, [1]).jordan_form(calc_transform=False) == Matrix([1])
 
-    # If we have eigenvalues in CRootOf form, raise errors
-    m = Matrix([[3, 0, 0, 0, -3], [0, -3, -3, 0, 3], [0, 3, 0, 3, 0], [0, 0, 3, 0, 3], [3, 0, 0, 3, 0]])
-    raises(MatrixError, lambda: m.jordan_form())
-
     # make sure that if the input has floats, the output does too
     m = Matrix([
         [                0.6875, 0.125 + 0.1875*sqrt(3)],
@@ -455,6 +466,10 @@ def test_jordan_form():
     P, J = m.jordan_form()
     assert all(isinstance(x, Float) or x == 0 for x in P)
     assert all(isinstance(x, Float) or x == 0 for x in J)
+
+    A = Matrix([[-3, 1, 2], [1, -1, 0], [1, 0, -2]])
+    P, J = A.jordan_form()
+    assert (P * J * P.inv()).applyfunc(nsimplify) == A
 
 
 def test_singular_values():

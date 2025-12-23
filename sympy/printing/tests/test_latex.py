@@ -48,7 +48,11 @@ from sympy.matrices.expressions.kronecker import KroneckerProduct
 from sympy.matrices.expressions.matexpr import MatrixSymbol
 from sympy.matrices.expressions.permutation import PermutationMatrix
 from sympy.matrices.expressions.slice import MatrixSlice
-from sympy.physics.control.lti import TransferFunction, Series, Parallel, Feedback, TransferFunctionMatrix, MIMOSeries, MIMOParallel, MIMOFeedback
+from sympy.matrices.expressions.dotproduct import DotProduct
+from sympy.physics.control.lti import (
+    TransferFunction, DiscreteTransferFunction, Series, Parallel, Feedback,
+    TransferFunctionMatrix, MIMOSeries, MIMOParallel, MIMOFeedback,
+)
 from sympy.physics.quantum import Commutator, Operator
 from sympy.physics.quantum.trace import Tr
 from sympy.physics.units import meter, gibibyte, gram, microgram, second, milli, micro
@@ -158,6 +162,7 @@ def test_latex_basic():
 
     assert latex(1/x) == r"\frac{1}{x}"
     assert latex(1/x, fold_short_frac=True) == r"1 / x"
+    assert latex((x + y)**-1, fold_short_frac=True) == r"1 / \left(x + y\right)"
     assert latex(-S(3)/2) == r"- \frac{3}{2}"
     assert latex(-S(3)/2, fold_short_frac=True) == r"- 3 / 2"
     assert latex(1/x**2) == r"\frac{1}{x^{2}}"
@@ -258,6 +263,7 @@ def test_latex_basic():
     assert latex(Pow(Rational(1, 3), -1, evaluate=False)) == r"\frac{1}{\frac{1}{3}}"
     assert latex(Pow(Rational(1, 3), -2, evaluate=False)) == r"\frac{1}{(\frac{1}{3})^{2}}"
     assert latex(Pow(Integer(1)/100, -1, evaluate=False)) == r"\frac{1}{\frac{1}{100}}"
+    assert latex(Pow(I, -4, evaluate=False)) == r"\frac{1}{i^{4}}"
 
     p = Symbol('p', positive=True)
     assert latex(exp(-p)*log(p)) == r"e^{- p} \log{\left(p \right)}"
@@ -940,6 +946,18 @@ def test_latex_derivatives():
     assert latex(diff(f(x), (x, Max(n1, n2)))) == \
         r'\frac{d^{\max\left(n_{1}, n_{2}\right)}}{d x^{\max\left(n_{1}, n_{2}\right)}} f{\left(x \right)}'
 
+    # parenthesizing of the argument
+    g = Function("g")
+    # addition always parenthesized
+    for mul_symbol in (None, 'dot'):
+        assert latex(Derivative(f(x) + g(x), x), mul_symbol=mul_symbol) == \
+            r"\frac{d}{d x} \left(f{\left(x \right)} + g{\left(x \right)}\right)"
+    # multiplication parenthesized only if mul_symbol isn't None
+    assert latex(Derivative(f(x) * g(x), x)) == \
+        r"\frac{d}{d x} f{\left(x \right)} g{\left(x \right)}"
+    assert latex(Derivative(f(x) * g(x), x), mul_symbol='dot') == \
+        r"\frac{d}{d x} \left(f{\left(x \right)} \cdot g{\left(x \right)}\right)"
+
     # set diff operator
     assert latex(diff(f(x), x), diff_operator="rd") == r'\frac{\mathrm{d}}{\mathrm{d} x} f{\left(x \right)}'
 
@@ -1408,6 +1426,10 @@ def test_latex_log():
     assert latex(pow(log(x), x)) == r"\log{\left(x \right)}^{x}"
     assert latex(pow(log(x), x), ln_notation=True) == \
         r"\ln{\left(x \right)}^{x}"
+    assert latex(log(x, y, evaluate=False)) == r"\log_y{\left(x \right)}"
+    assert latex(log(x, 10, evaluate=False)) == r"\log_{10}{\left(x \right)}"
+    assert latex(log(x, y, evaluate=False), ln_notation=True) == r"\log_y{\left(x \right)}"
+    assert latex(log(x, 10, evaluate=False), ln_notation=True) == r"\log_{10}{\left(x \right)}"
 
 
 def test_issue_3568():
@@ -2202,6 +2224,12 @@ def test_ElementwiseApplyFunction():
     assert latex(expr) == r'{\left( x \mapsto \frac{1}{x} \right)}_{\circ}\left({X}\right)'
 
 
+def test_MatrixUnit():
+    from sympy.matrices.expressions.special import MatrixUnit
+    assert latex(MatrixUnit(3, 3, 1, 2), mat_symbol_style='plain') == 'E_{1,2}'
+    assert latex(MatrixUnit(3, 3, 1, 2), mat_symbol_style='bold') == r'\mathcal{E}_{1,2}'
+
+
 def test_ZeroMatrix():
     from sympy.matrices.expressions.special import ZeroMatrix
     assert latex(ZeroMatrix(1, 1), mat_symbol_style='plain') == r"0"
@@ -2568,6 +2596,15 @@ def test_MatrixSymbol_printing():
     assert latex(-A*B - A*B*C - B) == r"- A B - A B C - B"
 
 
+def test_DotProduct_printing():
+    X = MatrixSymbol('X', 3, 1)
+    Y = MatrixSymbol('Y', 3, 1)
+    a = Symbol('a')
+    assert latex(DotProduct(X, Y)) == r"X \cdot Y"
+    assert latex(DotProduct(a * X, Y)) == r"a X \cdot Y"
+    assert latex(a * DotProduct(X, Y)) == r"a \left(X \cdot Y\right)"
+
+
 def test_KroneckerProduct_printing():
     A = MatrixSymbol('A', 3, 3)
     B = MatrixSymbol('B', 2, 2)
@@ -2611,6 +2648,16 @@ def test_TransferFunction_printing():
     assert latex(tf3) == r"\frac{y}{y^{2} + 2 y + 3}"
 
 
+def test_DiscreteTransferFunction_printing():
+    tf1 = DiscreteTransferFunction(x - 1, x + 1, x)
+    assert latex(tf1) == r"\frac{x - 1}{x + 1} \text{ [st: } {1} \text{]}"
+    tf2 = DiscreteTransferFunction(x + 1, 2 - y, x, Symbol('T'))
+    assert latex(tf2) == r"\frac{x + 1}{2 - y} \text{ [st: } {T} \text{]}"
+    tf3 = DiscreteTransferFunction(y, y**2 + 2*y + 3, y, 0.1)
+    assert latex(tf3) == \
+        r"\frac{y}{y^{2} + 2 y + 3} \text{ [st: } {0.1} \text{]}"
+
+
 def test_Parallel_printing():
     tf1 = TransferFunction(x*y**2 - z, y**3 - t**3, y)
     tf2 = TransferFunction(x - y, x + y, y)
@@ -2639,6 +2686,12 @@ def test_TransferFunctionMatrix_printing():
         r'\left[\begin{matrix}\frac{p}{p + x}\\\frac{p - s}{p + s}\end{matrix}\right]_\tau'
     assert latex(TransferFunctionMatrix([[tf1, tf2], [tf3, -tf1]])) == \
         r'\left[\begin{matrix}\frac{p}{p + x} & \frac{p - s}{p + s}\\\frac{p}{y^{2} + 2 y + 3} & \frac{\left(-1\right) p}{p + x}\end{matrix}\right]_\tau'
+
+    dtf1 = DiscreteTransferFunction(p, p + x, p, 0.1)
+    dtf2 = DiscreteTransferFunction(-s + p, p + s, p, 0.1)
+
+    assert latex(TransferFunctionMatrix([[dtf1], [dtf2]])) == \
+        r'\underset{[st:\ {0.100000000000000}]}{\left[\begin{matrix}\frac{p}{p + x}\\\frac{p - s}{p + s}\end{matrix}\right]_k}'
 
 
 def test_Feedback_printing():
@@ -2711,7 +2764,7 @@ def test_issue_9216():
     assert latex(expr_2) == r"1^{1^{-1}}"
 
     expr_3 = Pow(3, -2, evaluate=False)
-    assert latex(expr_3) == r"\frac{1}{9}"
+    assert latex(expr_3) == r"\frac{1}{3^{2}}"
 
     expr_4 = Pow(1, -2, evaluate=False)
     assert latex(expr_4) == r"1^{-2}"
@@ -3146,3 +3199,9 @@ def test_Array():
 def test_latex_with_unevaluated():
     with evaluate(False):
         assert latex(a * a) == r"a a"
+
+
+def test_latex_disable_split_super_sub():
+    assert latex(Symbol('u^a_b')) == 'u^{a}_{b}'
+    assert latex(Symbol('u^a_b'), disable_split_super_sub=False) == 'u^{a}_{b}'
+    assert latex(Symbol('u^a_b'), disable_split_super_sub=True) == 'u\\^a\\_b'
