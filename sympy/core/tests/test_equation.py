@@ -55,7 +55,9 @@ def test_functions_extensions():
                 tst = obj(*tempargs)
                 if not (tst == Equation(obj(*largs), obj(*rargs))):
                     failures.append(func + ' extended but did not work.')
-            except Exception as e:
+            except (ArithmeticError, AssertionError, AttributeError,
+                    ImportError, LookupError, ReferenceError, RuntimeError,
+                    TypeError, ValueError)as e:
                 failures.append(str(func) + ': ' + str(e))
     assert (failures == [])
     pass
@@ -98,7 +100,9 @@ def test_functions_extensions_eqn_not_arg1():
                     (tst == Equation(obj(*largs), obj(*rargs)))):
                         failures.append(func + '(' + str(*tempargs) + ') ' \
                                                                       'extended but did not work.')
-                except Exception as e:
+                except (ArithmeticError, AssertionError, AttributeError,
+                    ImportError, LookupError, ReferenceError, RuntimeError,
+                    TypeError, ValueError) as e:
                     failures.append(str(func) + ': ' + str(e))
     assert (failures == [])
     pass
