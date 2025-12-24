@@ -847,7 +847,7 @@ class DefinedFunction(Function):
     """Base class for defined functions like ``sin``, ``cos``, ..."""
 
     @cacheit
-    def __new__(cls, *args, **options) -> Expr:  # type: ignore
+    def __new__(cls, *args, **options) -> Expr | Equation:  # type: ignore
         return cls._new_(*args, **options)
 
 
@@ -861,7 +861,7 @@ class AppliedUndef(Function):
 
     name: str
 
-    def __new__(cls, *args, **options) -> Expr:  # type: ignore
+    def __new__(cls, *args, **options) -> Expr | Equation:  # type: ignore
         args = tuple(map(sympify, args))
         u = [a.name for a in args if isinstance(a, UndefinedFunction)]
         if u:
