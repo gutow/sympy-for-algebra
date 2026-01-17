@@ -308,7 +308,7 @@ exec(Path(os.path.join(dir_setup, 'sympy', 'release.py')).read_text())
 
 
 if __name__ == '__main__':
-    setup(name='sympy',
+    setup(name='sympy-for-algebra',
           version=__version__, # noqa: F821
           description='Computer algebra system (CAS) in Python',
           long_description=(Path(__file__).parent / 'README.md').read_text("UTF-8"),
